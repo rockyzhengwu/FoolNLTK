@@ -7,6 +7,7 @@
 * 暂时不支持外部词典
 
 
+
 ## Install
 ```bash
 pip install foolnltk
@@ -32,6 +33,7 @@ print(fool.cut(text))
 ```
 import fool
 
+text = "一个傻子在北京"
 print(fool.pos_cut(text))
 #[('一个', 'm'), ('傻子', 'n'), ('在', 'p'), ('北京', 'ns')]
 ```
@@ -41,8 +43,11 @@ print(fool.pos_cut(text))
 ```
 import fool 
 
+text = "一个傻子在北京"
 words, ners = fool.analysis(text)
 print(ners)
 #[(5, 8, 'location', '北京')]
 ```
+#### 注意
+* 暂时只在Python3 Linux 平台测试通过
 
