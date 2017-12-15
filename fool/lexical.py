@@ -119,6 +119,9 @@ class LexicalAnalyzer(object):
             label = seg_labels[i]
             w = text[i]
             if label == "B":
+                if tmp_word:
+                    words.append(tmp_word)
+                    tmp_word = ""
                 tmp_word += w
             elif label == "M":
                 tmp_word += w
@@ -129,6 +132,9 @@ class LexicalAnalyzer(object):
             else:
                 tmp_word = ""
                 words.append(w)
+
+        if tmp_word:
+            words.append(tmp_word)
         return words, input_chars, seg_path
 
     def analylis(self, text):
