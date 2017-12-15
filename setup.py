@@ -5,8 +5,8 @@
 
 from distutils.core import setup
 
-setup(name = 'Distutils',
-    version = '0.1.0',
+setup(name = 'foolnltk',
+    version = '0.0.1',
     description = 'Fool Nature Language toolkit ',
     author = 'wu.zheng',
     author_email = 'rocky.zheng314@gmail.com',
