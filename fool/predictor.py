@@ -9,7 +9,6 @@ from tensorflow.contrib.crf import viterbi_decode
 
 SEG_DICT = {"B": 0, "M": 1, "E": 2, "S": 3}
 
-
 def decode(logits, trans, sequence_lengths, tag_num):
     viterbi_sequences = []
     small = -1000.0
@@ -79,7 +78,8 @@ class NPredictor(object):
         self.sess.as_default()
         self.num_class = num_class
 
-    def predict(self, char_inputs, seg_inputs, pos=[]):
+    def predict(self, char_inputs, segs, pos=[]):
+        seg_inputs = [SEG_DICT.get(s) for s in segs]
 
         chars = list_to_array(char_inputs)
         segs = list_to_array(seg_inputs)
@@ -97,7 +97,6 @@ class NPredictor(object):
                 self.pos_in: poss,
                 self.dropout: 1.0
             }
-
         logits, trans = self.sess.run([self.logits, self.trans], feed_dict=feed_dict)
         path = decode(logits, trans, [chars.shape[1]], self.num_class)
         path = path[0][1:]

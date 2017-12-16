@@ -5,7 +5,7 @@ from fool import lexical
 LEXICAL_ANALYSER = lexical.LexicalAnalyzer()
 
 def analysis(text):
-    res = LEXICAL_ANALYSER.analylis(text)
+    res = LEXICAL_ANALYSER.analysis(text)
     return res
 
 def cut(text):

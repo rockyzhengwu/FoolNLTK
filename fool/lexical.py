@@ -79,7 +79,6 @@ class LexicalAnalyzer(object):
 
         ner_path = self.ner_model.predict(char_ids, seg_ids, pos_ids)
         ner_label = self.map.map_id_label(ner_path, "ner")
-
         ens = []
         entity = ""
         i = 0
@@ -135,13 +134,13 @@ class LexicalAnalyzer(object):
 
         if tmp_word:
             words.append(tmp_word)
-        return words, input_chars, seg_path
+        return words, input_chars, seg_labels
 
-    def analylis(self, text):
-        words, input_chars, seg_path = self.cut(text)
+    def analysis(self, text):
+        words, input_chars,  seg_labels = self.cut(text)
         ps, pos_path = self.pos(words)
         ner_pos_path = []
         for w, p in zip(words, pos_path):
             ner_pos_path.extend([p] * len(w))
-        entitys = self.ner(list(text), input_chars, seg_path, ner_pos_path)
+        entitys = self.ner(list(text), input_chars, seg_labels, ner_pos_path)
         return list(zip(words, ps)), entitys
