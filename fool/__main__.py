@@ -2,7 +2,7 @@
 #-*-coding:utf-8-*-
 
 
-"""Jieba command line interface."""
+"""Fool command line interface."""
 import sys
 import fool
 from argparse import ArgumentParser
