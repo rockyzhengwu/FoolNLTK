@@ -81,9 +81,6 @@ class NPredictor(object):
     def predict(self, char_inputs, segs, pos=[]):
 
         seg_inputs = [SEG_DICT.get(s) for s in segs]
-        print(char_inputs)
-        print(segs)
-        print(pos)
 
         chars = list_to_array(char_inputs)
         segs = list_to_array(seg_inputs)
