@@ -26,6 +26,11 @@ text = "一个傻子在北京"
 print(fool.cut(text))
 # ['一个', '傻子', '在', '北京']
 ```
+命令行分词
+```bash
+python -m fool [filename]
+```
+
 
 
 ##### 词性标注
