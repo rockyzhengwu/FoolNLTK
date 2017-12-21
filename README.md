@@ -2,9 +2,10 @@
 中文处理工具包
 
 ## 特点
+* 我可能不是最快的开源中文分词，但可能是最准的开源中文分词
 * 基于[BiLSTM模型](http://www.aclweb.org/anthology/N16-1030 )训练而成
 * 包含分词，词性标注，实体识别,　都有比较高的准确率
-* 暂时不支持外部词典
+* 用户自定义词典
 
 
 
@@ -29,6 +30,29 @@ print(fool.cut(text))
 命令行分词
 ```bash
 python -m fool [filename]
+```
+
+###### 用户自定义词典
+词典格式
+```
+难受香菇 10
+什么鬼 10
+分词工具 10
+北京 10
+北京天安门 10
+```
+加载词典
+
+```python
+import fool
+fool.load_userdict(path)
+text = "我在北京天安门看你难受香菇"
+print(fool.cut(text))
+# ['我', '在', '北京天安门', '看', '你', '难受香菇']
+```
+删除词典
+```python
+fool.delete_userdict();
 ```
 
 
