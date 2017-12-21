@@ -63,11 +63,21 @@ class DataMap(object):
 
 class LexicalAnalyzer(object):
     def __init__(self):
+        self.initialized = False
+        self.map = None
+        self.seg_model = None
+        self.pos_model = None
+        self.ner_model = None
+
+
+    def load_model(self):
         data_path = os.path.join(sys.prefix, "fool")
         self.map = DataMap(os.path.join(data_path, "maps.pkl"))
         self.seg_model = Predictor(os.path.join(data_path, "seg.pb"), self.map.num_seg)
         self.pos_model = Predictor(os.path.join(data_path, "pos.pb"), self.map.num_pos)
         self.ner_model = NPredictor(os.path.join(data_path, "ner_pos.pb"), self.map.num_ner, True)
+        self.initialized = True
+
 
     def pos(self, words):
         word_vec = self.map.map_word(words)
@@ -92,9 +102,7 @@ class LexicalAnalyzer(object):
             if lb == "S":
                 ens.append((i, i + 1, lt, word))
             elif lb == "B":
-                if entity:
-                    ens.append(entity)
-                    entity = ""
+                entity = ""
                 entity += word
             elif lb == "M":
                 entity += word
@@ -118,9 +126,6 @@ class LexicalAnalyzer(object):
             label = seg_labels[i]
             w = text[i]
             if label == "B":
-                if tmp_word:
-                    words.append(tmp_word)
-                    tmp_word = ""
                 tmp_word += w
             elif label == "M":
                 tmp_word += w
