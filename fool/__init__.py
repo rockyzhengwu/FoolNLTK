@@ -39,7 +39,7 @@ def cut(text):
 
 
 def pos_cut(text):
-    words, _, _ = LEXICAL_ANALYSER.cut(text)
+    words = cut(text)
     pos, _ = LEXICAL_ANALYSER.pos(words)
     return list(zip(words, pos))
 
