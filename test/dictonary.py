@@ -21,6 +21,8 @@ print(fool._DICTIONARY.weights)
 
 def tcut():
     text = "我在北京天安门"
+    words, ners = fool.analysis(text)
+    print(ners)
     words = fool.pos_cut(text)
     print(words)
     fool.delete_userdict()

@@ -19,18 +19,21 @@ DEFAULT_LOGGER = logging.getLogger(__name__)
 DEFAULT_LOGGER.setLevel(logging.DEBUG)
 DEFAULT_LOGGER.addHandler(__log_console)
 
-
-def analysis(text):
-    res = LEXICAL_ANALYSER.analysis(text)
-    return res
-
-
-def cut(text):
+def _check_model():
     if not LEXICAL_ANALYSER.initialized:
         DEFAULT_LOGGER.debug("starting load model ")
         start = time.time()
         LEXICAL_ANALYSER.load_model()
         DEFAULT_LOGGER.debug("loaded model cost : %fs" % (time.time() - start))
+
+def analysis(text):
+    _check_model()
+    res = LEXICAL_ANALYSER.analysis(text)
+    return res
+
+
+def cut(text):
+    _check_model()
     words, _, _ = LEXICAL_ANALYSER.cut(text)
 
     if _DICTIONARY.sizes != 0:
