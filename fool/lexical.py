@@ -80,6 +80,8 @@ class LexicalAnalyzer(object):
 
 
     def pos(self, words):
+        if not words:
+            return [], []
         word_vec = self.map.map_word(words)
         pos_path = self.pos_model.predict(word_vec)
         pos = self.map.map_id_label(pos_path, "pos")
@@ -115,6 +117,8 @@ class LexicalAnalyzer(object):
         return ens
 
     def cut(self, text):
+        if not text:
+            return [], [], []
         input_chars = self.map.map_char(list(text))
         seg_path = self.seg_model.predict(input_chars)
         seg_labels = self.map.map_id_label(seg_path, "seg")
@@ -142,6 +146,8 @@ class LexicalAnalyzer(object):
         return words, input_chars, seg_labels
 
     def analysis(self, text):
+        if not text:
+            return [], []
         words, input_chars,  seg_labels = self.cut(text)
         ps, pos_path = self.pos(words)
         ner_pos_path = []

@@ -34,6 +34,8 @@ def analysis(text):
 
 def cut(text):
     _check_model()
+    if not text:
+        return []
     words, _, _ = LEXICAL_ANALYSER.cut(text)
 
     if _DICTIONARY.sizes != 0:
