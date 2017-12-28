@@ -78,5 +78,7 @@ print(ners)
 #[(5, 8, 'location', '北京')]
 ```
 #### 注意
+* Python2　暂时不支持是因为数据文件是pickle读取的，Python2和Python3不兼容,待修改
+* 有找不到模型文件的, 可以看下```sys.prefix```,一般默认为```/usr/local/```
 * 暂时只在Python3 Linux 平台测试通过
 
