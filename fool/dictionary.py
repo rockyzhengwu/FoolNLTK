@@ -40,4 +40,4 @@ class Dictionary():
         return matchs
 
     def get_weight(self, word):
-        return self.weights.get(word, 1.0)
+        return self.weights.get(word, 0.1)

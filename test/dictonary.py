@@ -1,34 +1,15 @@
 #!/usr/bin/env python
-#-*-coding:utf-8-*-
+# -*-coding:utf-8-*-
 
 import fool
-from fool.dictionary import Dictionary
 
-def td():
-    d = Dictionary()
-    d.add_dict("./test_dict.txt")
-    matchs = d.parse_words("什么鬼我难受香菇")
-    for mat in matchs:
-        print(mat.keyword)
-        print(mat.start)
-        print(mat.end)
-    print(d.sizes)
+text = "我在北京天安门看你难受香菇,一一千四百二十九"
 
-
+print("no dict:", fool.cut(text))
 fool.load_userdict("./test_dict.txt")
-print(fool._DICTIONARY.sizes)
-print(fool._DICTIONARY.weights)
+print("use dict: ", fool.cut(text))
+fool.delete_userdict()
+print("delete dict:", fool.cut(text))
 
-def tcut():
-    text = "我在北京天安门"
-    words, ners = fool.analysis(text)
-    print(ners)
-    words = fool.pos_cut(text)
-    print(words)
-    fool.delete_userdict()
-    print(fool.cut(text))
-
-
-if __name__ == '__main__':
-    td()
-    tcut()
+words, ners = fool.analysis(text)
+print("ners: ", ners)

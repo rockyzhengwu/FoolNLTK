@@ -6,7 +6,20 @@
 * 基于[BiLSTM模型](http://www.aclweb.org/anthology/N16-1030 )训练而成
 * 包含分词，词性标注，实体识别,　都有比较高的准确率
 * 用户自定义词典
+* 可训练自己的模型
 
+
+## 定制自己的模型
+
+
+```bash
+get clone https://github.com/rockyzhengwu/FoolNLTK.git
+cd FoolNLTK/train
+
+```
+详细训练步骤可参考[文档](./train/README.md)
+
+仅在linux Python3　环境测试通过
 
 
 ## Install
@@ -14,7 +27,8 @@
 pip install foolnltk
 ```
 
-### 使用说明
+
+## 使用说明
 
 ##### 分词
 
@@ -77,6 +91,7 @@ words, ners = fool.analysis(text)
 print(ners)
 #[(5, 8, 'location', '北京')]
 ```
+
 #### 注意
 * Python2　暂时不支持是因为数据文件是pickle读取的，Python2和Python3不兼容,待修改
 * 有找不到模型文件的, 可以看下```sys.prefix```,一般默认为```/usr/local/```

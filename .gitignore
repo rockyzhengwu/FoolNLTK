@@ -102,3 +102,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+train/results/
+train/datasets/demo/vec
+train/datasets/demo/*.pkl
+train/datasets/demo/.json
+*.tfrecord
+*.json
