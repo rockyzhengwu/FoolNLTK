@@ -41,7 +41,7 @@ def _check_input(text, ignore=False):
 def ner(text, ignore=False):
     text = _check_input(text, ignore)
     if not text:
-        return []
+        return [[]]
     res = LEXICAL_ANALYSER.ner(text)
     return res
 
@@ -49,7 +49,7 @@ def ner(text, ignore=False):
 def analysis(text, ignore=False):
     text = _check_input(text, ignore)
     if not text:
-        return [], []
+        return [[]], [[]]
     res = LEXICAL_ANALYSER.analysis(text)
     return res
 
@@ -59,7 +59,7 @@ def cut(text, ignore=False):
     text = _check_input(text, ignore)
 
     if not text:
-        return []
+        return [[]]
 
     text = [t for t in text if t]
     all_words = LEXICAL_ANALYSER.cut(text)
