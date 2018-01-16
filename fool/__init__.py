@@ -107,7 +107,7 @@ def _mearge_user_words(text, seg_results):
         index += w_len
 
     for m in matchs:
-        graph[m.start][m.end] = _DICTIONARY.get_weight(m.keyword) + len(m.keyword)
+        graph[m.start][m.end] = _DICTIONARY.get_weight(m.keyword) * len(m.keyword)
 
     route = {}
     route[text_len] = (0, 0)
