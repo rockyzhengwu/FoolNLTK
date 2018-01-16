@@ -3,62 +3,20 @@
 
 import sys
 import os
-import pickle
+import json
 
-from fool.predictor import Predictor, NPredictor
+from fool.predictor import Predictor
+
+from zipfile import ZipFile
 
 OOV_STR = "<OOV>"
 
 
-class DataMap(object):
-    def __init__(self, path):
-        self.char_to_id = {}
-        self.word_to_id = {}
-        self.id_to_seg = {}
-        self.id_to_pos = {}
-        self.id_to_ner = {}
-        self._load(path)
-        self.num_seg = len(self.id_to_seg)
-        self.num_pos = len(self.id_to_pos)
-        self.num_ner = len(self.id_to_ner)
-
-    def _load(self, path):
-        with open(path, 'rb') as f:
-            data = pickle.load(f)
-            self.char_to_id = data.get("char_map")
-            self.word_to_id = data.get("word_map")
-            self.id_to_seg = data.get("seg_map")
-            self.id_to_pos = data.get("pos_map")
-            self.id_to_ner = data.get("ner_map")
-
-    def map_id_label(self, ids, dict_name):
-        if dict_name == "seg":
-            labels = [self.id_to_seg.get(i) for i in ids]
-        elif dict_name == "pos":
-            labels = [self.id_to_pos.get(i) for i in ids]
-        elif dict_name == "ner":
-            labels = [self.id_to_ner.get(i) for i in ids]
-        else:
-            raise Exception("dict_name {} not error".format(dict_name))
-        return labels
-
-    def map_char(self, chars):
-        vec = []
-        for c in chars:
-            if c in self.char_to_id:
-                vec.append(self.char_to_id[c])
-            else:
-                vec.append(self.char_to_id[OOV_STR])
-        return vec
-
-    def map_word(self, words):
-        vec = []
-        for w in words:
-            if w in self.word_to_id:
-                vec.append(self.word_to_id[w])
-            else:
-                vec.append(self.word_to_id[OOV_STR])
-        return vec
+def _load_map_file(path, char_map_name, id_map_name):
+    with ZipFile(path) as myzip:
+        with myzip.open('all_map.json') as myfile:
+            data = json.load(myfile)
+            return data.get(char_map_name), data.get(id_map_name)
 
 
 class LexicalAnalyzer(object):
@@ -68,90 +26,108 @@ class LexicalAnalyzer(object):
         self.seg_model = None
         self.pos_model = None
         self.ner_model = None
+        self.data_path = os.path.join(sys.prefix, "fool")
+        self.map_file_path = os.path.join(self.data_path, "map.zip")
 
 
-    def load_model(self):
-        data_path = os.path.join(sys.prefix, "fool")
-        self.map = DataMap(os.path.join(data_path, "maps.pkl"))
-        self.seg_model = Predictor(os.path.join(data_path, "seg.pb"), self.map.num_seg)
-        self.pos_model = Predictor(os.path.join(data_path, "pos.pb"), self.map.num_pos)
-        self.ner_model = NPredictor(os.path.join(data_path, "ner_pos.pb"), self.map.num_ner, True)
-        self.initialized = True
+    def _load_model(self, model_namel, word_map_name, tag_name):
+        seg_model_path = os.path.join(self.data_path, model_namel)
+        char_to_id, id_to_seg = _load_map_file(self.map_file_path, word_map_name, tag_name)
+        return Predictor(seg_model_path, char_to_id, id_to_seg)
 
+    def _load_seg_model(self):
+        self.seg_model = self._load_model("seg.pb", "char_map", "seg_map")
 
-    def pos(self, words):
-        if not words:
-            return [], []
-        word_vec = self.map.map_word(words)
-        pos_path = self.pos_model.predict(word_vec)
-        pos = self.map.map_id_label(pos_path, "pos")
-        return pos, pos_path
+    def _load_pos_model(self):
+        self.pos_model = self._load_model("pos.pb", "word_map", "pos_map")
 
-    def ner(self, chars, char_ids, seg_ids, pos_ids=[]):
+    def _load_ner_model(self):
+        self.ner_model = self._load_model("ner.pb", "char_map", "ner_map")
 
-        ner_path = self.ner_model.predict(char_ids, seg_ids, pos_ids)
-        ner_label = self.map.map_id_label(ner_path, "ner")
-        ens = []
-        entity = ""
-        i = 0
+    def pos(self, seg_words_list):
+        if not self.pos_model:
+            self._load_pos_model()
+        pos_labels = self.pos_model.predict(seg_words_list)
+        return pos_labels
 
-        for label, word in zip(ner_label, chars):
-            i += 1
-            if label == "O":
-                continue
-            lt = label.split("_")[1]
-            lb = label.split("_")[0]
-            if lb == "S":
-                ens.append((i, i + 1, lt, word))
-            elif lb == "B":
-                entity = ""
-                entity += word
-            elif lb == "M":
-                entity += word
-            elif lb == "E":
-                entity += word
+    def ner(self, text_list):
+        if not self.ner_model:
+            self._load_ner_model()
+
+        ner_labels = self.ner_model.predict(text_list)
+        all_entitys = []
+
+        for ti, text in enumerate(text_list):
+            ens = []
+            entity = ""
+            i = 0
+            ner_label = ner_labels[ti]
+            chars = list(text)
+
+            for label, word in zip(ner_label, chars):
+                i += 1
+
+                if label == "O":
+                    continue
+
+                lt = label.split("_")[1]
+                lb = label.split("_")[0]
+
+                if lb == "S":
+                    ens.append((i, i + 1, lt, word))
+                elif lb == "B":
+                    entity = ""
+                    entity += word
+                elif lb == "M":
+                    entity += word
+
+                elif lb == "E":
+                    entity += word
+                    ens.append((i - len(entity), i + 1, lt, entity))
+                    entity = ""
+
+            if entity:
                 ens.append((i - len(entity), i + 1, lt, entity))
-                entity = ""
-        if entity:
-            ens.append((i - len(entity), i + 1, lt, entity))
-        return ens
+            all_entitys.append(ens)
 
-    def cut(self, text):
-        if not text:
-            return [], [], []
-        input_chars = self.map.map_char(list(text))
-        seg_path = self.seg_model.predict(input_chars)
-        seg_labels = self.map.map_id_label(seg_path, "seg")
+        return all_entitys
 
-        N = len(seg_labels)
-        words = []
-        tmp_word = ""
-        for i in range(N):
-            label = seg_labels[i]
-            w = text[i]
-            if label == "B":
-                tmp_word += w
-            elif label == "M":
-                tmp_word += w
-            elif label == "E":
-                tmp_word += w
+    def cut(self, text_list):
+
+        if not self.seg_model:
+            self._load_seg_model()
+
+        all_labels = self.seg_model.predict(text_list)
+        sent_words = []
+        for ti, text in enumerate(text_list):
+            words = []
+            N = len(text)
+            seg_labels = all_labels[ti]
+            tmp_word = ""
+            for i in range(N):
+                label = seg_labels[i]
+                w = text[i]
+                if label == "B":
+                    tmp_word += w
+                elif label == "M":
+                    tmp_word += w
+                elif label == "E":
+                    tmp_word += w
+                    words.append(tmp_word)
+                    tmp_word = ""
+                else:
+                    tmp_word = ""
+                    words.append(w)
+            if tmp_word:
                 words.append(tmp_word)
-                tmp_word = ""
-            else:
-                tmp_word = ""
-                words.append(w)
+            sent_words.append(words)
+        return sent_words
 
-        if tmp_word:
-            words.append(tmp_word)
-        return words, input_chars, seg_labels
 
-    def analysis(self, text):
-        if not text:
-            return [], []
-        words, input_chars,  seg_labels = self.cut(text)
-        ps, pos_path = self.pos(words)
-        ner_pos_path = []
-        for w, p in zip(words, pos_path):
-            ner_pos_path.extend([p] * len(w))
-        entitys = self.ner(list(text), input_chars, seg_labels, ner_pos_path)
-        return list(zip(words, ps)), entitys
+    def analysis(self, text_list):
+        words =  self.cut(text_list)
+        pos_labels = self.pos(words)
+        ners = self.ner(text_list)
+        word_inf = [list(zip(ws, ps)) for ws, ps in zip(words, pos_labels)]
+        return word_inf, ners
+

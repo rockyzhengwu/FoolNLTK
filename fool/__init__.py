@@ -4,7 +4,6 @@
 
 
 import sys
-import time
 import logging
 from collections import defaultdict
 
@@ -20,41 +19,65 @@ DEFAULT_LOGGER = logging.getLogger(__name__)
 DEFAULT_LOGGER.setLevel(logging.DEBUG)
 DEFAULT_LOGGER.addHandler(__log_console)
 
+__all__= ["load_model", "cut", "pos_cut", "ner", "analysis", "load_userdict", "delete_userdict"]
 
 def load_model(map_file, model_file):
     m = model.Model(map_file=map_file, model_file=model_file)
     return m
 
+def _check_input(text, ignore=False):
+    if not text:
+        return []
 
-def _check_model():
-    if not LEXICAL_ANALYSER.initialized:
-        DEFAULT_LOGGER.debug("starting load model ")
-        start = time.time()
-        LEXICAL_ANALYSER.load_model()
-        DEFAULT_LOGGER.debug("loaded model cost : %fs" % (time.time() - start))
+    if not isinstance(text, list):
+        text = [text]
+
+    null_index = [i for i, t in enumerate(text) if not t]
+    if null_index and not ignore:
+        raise Exception("null text in input ")
+
+    return text
+
+def ner(text, ignore=False):
+    text = _check_input(text, ignore)
+    if not text:
+        return []
+    res = LEXICAL_ANALYSER.ner(text)
+    return res
 
 
-def analysis(text):
-    _check_model()
+def analysis(text, ignore=False):
+    text = _check_input(text, ignore)
+    if not text:
+        return [], []
     res = LEXICAL_ANALYSER.analysis(text)
     return res
 
 
-def cut(text):
-    _check_model()
+def cut(text, ignore=False):
+
+    text = _check_input(text, ignore)
+
     if not text:
         return []
-    words, _, _ = LEXICAL_ANALYSER.cut(text)
 
+    text = [t for t in text if t]
+    all_words = LEXICAL_ANALYSER.cut(text)
+    new_words = []
     if _DICTIONARY.sizes != 0:
-        words = _mearge_user_words(text, words)
-    return words
+        for sent, words in zip(text, all_words):
+            words = _mearge_user_words(sent, words)
+            new_words.append(words)
+    else:
+        new_words = all_words
+    return new_words
 
 
 def pos_cut(text):
     words = cut(text)
-    pos, _ = LEXICAL_ANALYSER.pos(words)
-    return list(zip(words, pos))
+    pos_labels = LEXICAL_ANALYSER.pos(words)
+    word_inf = [list(zip(ws, ps)) for ws, ps in zip(words, pos_labels)]
+    return word_inf
 
 
 def load_userdict(path):
@@ -84,7 +107,7 @@ def _mearge_user_words(text, seg_results):
         index += w_len
 
     for m in matchs:
-        graph[m.start][m.end] = _DICTIONARY.get_weight(m.keyword) * len(m.keyword)
+        graph[m.start][m.end] = _DICTIONARY.get_weight(m.keyword) + len(m.keyword)
 
     route = {}
     route[text_len] = (0, 0)

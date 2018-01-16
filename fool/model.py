@@ -17,7 +17,7 @@ def decode(logits, trans, sequence_lengths, tag_num):
         logits = np.concatenate([score, pad], axis=1)
         logits = np.concatenate([start, logits], axis=0)
         viterbi_seq, viterbi_score = viterbi_decode(logits, trans)
-        viterbi_sequences += viterbi_seq[1:]
+        viterbi_sequences .append(viterbi_seq[1:])
     return viterbi_sequences
 
 
@@ -52,21 +52,28 @@ class Model(object):
         self.num_class = len(self.id_to_tag)
 
 
-    def predict(self, text):
+    def predict(self, sents):
         inputs = []
-        for w in text:
-            if w in self.char_to_id:
-                inputs.append(self.char_to_id[w])
-            else:
-                inputs.append(self.char_to_id["<OOV>"])
-        inputs =  np.array(inputs, dtype=np.int32).reshape(1, len(inputs))
-        lengths=[len(text)]
+        lengths = [len(text) for text in sents]
+        max_len = max(lengths)
+
+        for sent in sents:
+            sent_ids = [self.char_to_id.get(w) if w in self.char_to_id else self.char_to_id.get("<OOV>") for w in sent]
+            padding = [0] * (max_len - len(sent_ids))
+            sent_ids += padding
+            inputs.append(sent_ids)
+
+        inputs = np.array(inputs, dtype=np.int32)
+
         feed_dict = {
             self.input_x: inputs,
             self.lengths: lengths,
             self.dropout: 1.0
         }
+
         logits, trans = self.sess.run([self.logits, self.trans], feed_dict=feed_dict)
-        path = decode(logits, trans, [inputs.shape[1]], self.num_class)
-        tags = [self.id_to_tag[p] for p in path]
-        return tags
+        path = decode(logits, trans, lengths, self.num_class)
+        labels = [[self.id_to_tag.get(l) for l in p] for p in path]
+        return labels
+
+
