@@ -7,7 +7,7 @@
 * 包含分词，词性标注，实体识别,　都有比较高的准确率
 * 用户自定义词典
 * 可训练自己的模型
-
+* 批量处理
 
 ## 定制自己的模型
 
@@ -41,7 +41,8 @@ text = "一个傻子在北京"
 print(fool.cut(text))
 # ['一个', '傻子', '在', '北京']
 ```
-命令行分词
+命令行分词, 可指定```-b```参数，每次切割的行数能加快分词速度
+
 ```bash
 python -m fool [filename]
 ```
@@ -60,10 +61,12 @@ python -m fool [filename]
 ```python
 import fool
 fool.load_userdict(path)
-text = "我在北京天安门看你难受香菇"
+text = ["我在北京天安门看你难受香菇", "我在北京晒太阳你在非洲看雪"]
 print(fool.cut(text))
-# ['我', '在', '北京天安门', '看', '你', '难受香菇']
+#[['我', '在', '北京', '天安门', '看', '你', '难受', '香菇'],
+# ['我', '在', '北京', '晒太阳', '你', '在', '非洲', '看', '雪']]
 ```
+
 删除词典
 ```python
 fool.delete_userdict();
@@ -76,9 +79,9 @@ fool.delete_userdict();
 ```
 import fool
 
-text = "一个傻子在北京"
+text = ["一个傻子在北京"]
 print(fool.pos_cut(text))
-#[('一个', 'm'), ('傻子', 'n'), ('在', 'p'), ('北京', 'ns')]
+#[[('一个', 'm'), ('傻子', 'n'), ('在', 'p'), ('北京', 'ns')]]
 ```
 
 
@@ -86,14 +89,12 @@ print(fool.pos_cut(text))
 ```
 import fool 
 
-text = "一个傻子在北京"
+text = ["一个傻子在北京","你好啊"]
 words, ners = fool.analysis(text)
 print(ners)
-#[(5, 8, 'location', '北京')]
+#[[(5, 8, 'location', '北京')]]
 ```
 
 #### 注意
-* Python2　暂时不支持是因为数据文件是pickle读取的，Python2和Python3不兼容,待修改
 * 有找不到模型文件的, 可以看下```sys.prefix```,一般默认为```/usr/local/```
-* 暂时只在Python3 Linux 平台测试通过
 
