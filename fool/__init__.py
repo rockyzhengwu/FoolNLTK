@@ -47,10 +47,16 @@ def ner(text, ignore=False):
 
 
 def analysis(text, ignore=False):
+    def _analysis(text_list):
+        words =  cut(text_list)
+        pos_labels = LEXICAL_ANALYSER.pos(words)
+        ners = LEXICAL_ANALYSER.ner(text_list)
+        word_inf = [list(zip(ws, ps)) for ws, ps in zip(words, pos_labels)]
+        return word_inf, ners
     text = _check_input(text, ignore)
     if not text:
         return [[]], [[]]
-    res = LEXICAL_ANALYSER.analysis(text)
+    res = _analysis(text)
     return res
 
 
