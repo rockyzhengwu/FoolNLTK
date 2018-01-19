@@ -124,12 +124,3 @@ class LexicalAnalyzer(object):
                 words.append(tmp_word)
             sent_words.append(words)
         return sent_words
-
-
-    def analysis(self, text_list):
-        words =  self.cut(text_list)
-        pos_labels = self.pos(words)
-        ners = self.ner(text_list)
-        word_inf = [list(zip(ws, ps)) for ws, ps in zip(words, pos_labels)]
-        return word_inf, ners
-
