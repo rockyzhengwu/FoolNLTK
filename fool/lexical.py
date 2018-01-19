@@ -15,7 +15,9 @@ OOV_STR = "<OOV>"
 def _load_map_file(path, char_map_name, id_map_name):
     with ZipFile(path) as myzip:
         with myzip.open('all_map.json') as myfile:
-            data = json.load(myfile)
+            content = myfile.readline()
+            content = content.decode()
+            data = json.loads(content)
             return data.get(char_map_name), data.get(id_map_name)
 
 
