@@ -107,7 +107,3 @@ if __name__ == '__main__':
     out_names  = ['project/output/pred', 'project/logits', "crf_loss/transitions"]
     save_to_binary(args.checkpoint_dir, os.path.join(args.out_dir, "modle.pb"), out_names)
 
-    # model_path = "/home/wuzheng/dl/FoolNLTK-train/train/results/demo_seg/modle.pb"
-    # map_path = "/home/wuzheng/dl/FoolNLTK-train/train/datasets/demo_seg/maps.pkl"
-    # predictor = Predictor(map_path=map_path, model_path=model_path)
-    # predictor.predict("这项活动")
