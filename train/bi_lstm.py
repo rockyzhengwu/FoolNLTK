@@ -20,7 +20,7 @@ class BiLSTM(object):
         self.lr = config["lr"]
 
 
-        self.char_embeding = tf.concat(axis=0, values=[tf.get_variable(name="char_embeding", initializer=embeddings)])
+        self.char_embeding = tf.get_variable(name="char_embeding", initializer=embeddings)
 
         self.global_step = tf.Variable(0, trainable=False)
         self.initializer = initializers.xavier_initializer()
