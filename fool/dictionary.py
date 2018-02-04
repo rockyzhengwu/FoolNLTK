@@ -15,10 +15,10 @@ class Dictionary():
         self.weights = {}
         self.sizes = 0
 
-    def add_dict(self, path):
+    def add_dict(self, path, encoding):
         words = []
 
-        with open(path) as f:
+        with open(path, encoding=encoding) as f:
             for i, line in enumerate(f):
                 line = line.strip("\n").strip()
                 if not line:

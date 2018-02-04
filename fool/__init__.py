@@ -80,8 +80,8 @@ def pos_cut(text):
     return word_inf
 
 
-def load_userdict(path):
-    _DICTIONARY.add_dict(path)
+def load_userdict(path, encoding='utf-8'):
+    _DICTIONARY.add_dict(path, encoding)
 
 
 def delete_userdict():
