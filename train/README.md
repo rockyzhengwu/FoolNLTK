@@ -1,6 +1,16 @@
 # FoolNLTK-train
 FoolNLTK training process
 
+在新的分支idcnn里添加了[dilated-cnn](https://arxiv.org/abs/1702.02098)的训练代码
+感谢[原作者的代码](https://github.com/iesl/dilated-cnn-ner)
+
+主要有以下几个文件:
+```cnn.py``` 模型文件
+```cnn_train.py```训练代码
+```cnn_main.sh```　整合了一些命令到shell中
+
+另外我对比了LSTM和CNN的速度CNN有提高，但并没有到惊人的程度
+
 ## 1.train file
 
 训练数据的格式和CRF++的训练数据一致,每一列用`\t`分隔，每一个句子用`\n`分隔
