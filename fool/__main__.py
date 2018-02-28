@@ -42,7 +42,6 @@ lines = fp.readlines(batch_zize)
 
 while lines:
     lines = [ln.strip("\r\n") for ln in lines]
-    print(lines)
     if args.pos:
         result_list  = fool.pos_cut(lines)
         for res in result_list:
