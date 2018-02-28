@@ -6,7 +6,7 @@
 from distutils.core import setup
 
 setup(name = 'foolnltk',
-    version = '0.1.3',
+    version = '0.1.4',
     description = 'Fool Nature Language toolkit ',
     author = 'wu.zheng',
     author_email = 'rocky.zheng314@gmail.com',
