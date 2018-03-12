@@ -96,6 +96,9 @@ print(ners)
 #[[(5, 8, 'location', '北京')]]
 ```
 
+### 其他语言版本
+[Java版](https://github.com/rockyzhengwu/JFoolNLTK)
+
 #### 注意
 * 有找不到模型文件的, 可以看下```sys.prefix```,一般默认为```/usr/local/```
 
