@@ -82,6 +82,8 @@ class BiLSTM(object):
     def project_layer(self, lstm_outputs, name=None):
         """
         """
+        # 尝试 todo 直接映射lstm_outputs 到 num_tags
+
         with tf.variable_scope("project" if not name else name):
             with tf.variable_scope("hidden"):
                 w_tanh = tf.get_variable("w_tanh", shape=[self.lstm_dim * 2, self.lstm_dim],
@@ -95,6 +97,8 @@ class BiLSTM(object):
 
                 drop_hidden = tf.nn.dropout(hidden, self.dropout)
 
+            # output = tf.reshape(lstm_outputs, shape=[-1, self.lstm_dim * 2])
+            # drop_hidden = tf.nn.dropout(output, 1-self.dropout)
 
             # project to score of tags
             with tf.variable_scope("output"):
