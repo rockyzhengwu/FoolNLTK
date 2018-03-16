@@ -22,7 +22,7 @@ def decode(logits, trans, sequence_lengths, tag_num):
 
 
 def load_map(path):
-    with open(path, 'rb') as f:
+    with open(path) as f:
         char_to_id,  tag_to_id, id_to_tag = pickle.load(f)
     return char_to_id, id_to_tag
 
