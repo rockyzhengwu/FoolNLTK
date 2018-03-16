@@ -28,7 +28,7 @@ def load_map(path):
 
 
 def load_graph(path):
-    with tf.gfile.GFile(path, "rb") as f:
+    with tf.gfile.GFile(path) as f:
         graph_def = tf.GraphDef()
         graph_def.ParseFromString(f.read())
     with tf.Graph().as_default() as graph:
