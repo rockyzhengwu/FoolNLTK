@@ -1,37 +1,39 @@
 # FoolNLTK
-中文处理工具包
+A Chinese word processing toolkit
 
-## 特点
-* 可能不是最快的开源中文分词，但很可能是最准的开源中文分词
-* 基于[BiLSTM模型](http://www.aclweb.org/anthology/N16-1030 )训练而成
-* 包含分词，词性标注，实体识别,　都有比较高的准确率
-* 用户自定义词典
-* 可训练自己的模型
-* 批量处理
+[Chinese document](./README_CH.md)
+## Features
+* Although not the fastest, FoolNLTK is probably the most accurate open source Chinese word segmenter in the market
+* Trained based on the [BiLSTM model](http://www.aclweb.org/anthology/N16-1030 )
+* High-accuracy in participle, part-of-speech tagging, entity recognition
+* User-defined dictionary
+* Ability to self train models
+* Allows for batch processing
 
 
-## 定制自己的模型
+## Getting Started
 
+To download and build FoolNLTK, type:
 
 ```bash
 get clone https://github.com/rockyzhengwu/FoolNLTK.git
 cd FoolNLTK/train
 
 ```
-详细训练步骤可参考[文档](./train/README.md)
+For detailed [instructions](./train/README.md)
 
-仅在linux Python3　环境测试通过
+* Only tested in Linux Python 3 environment. 
 
 
-## Install
+### Installation
 ```bash
 pip install foolnltk
 ```
 
 
-## 使用说明
+## Usage Intructions
 
-##### 分词
+##### For Participles:
 
 
 
@@ -42,14 +44,17 @@ text = "一个傻子在北京"
 print(fool.cut(text))
 # ['一个', '傻子', '在', '北京']
 ```
-命令行分词, 可指定```-b```参数，每次切割的行数能加快分词速度
+
+For participle segmentations, specify a ```-b``` parameter to increase the number of lines segmented every run.  
 
 ```bash
 python -m fool [filename]
 ```
 
-###### 用户自定义词典
-词典格式格式如下，词的权重越高，词的长度越长就越越可能出现,　权重值请大于1
+###### User-defined dictionary
+The format of the dictionary is as follows: the higher the weight of a word, and the longer the word length is, 
+the more likely the word is to appear. Word weight value should be greater than 1。 
+
 ```
 难受香菇 10
 什么鬼 10
@@ -57,7 +62,7 @@ python -m fool [filename]
 北京 10
 北京天安门 10
 ```
-加载词典
+To load the dictionary:
 
 ```python
 import fool
@@ -68,14 +73,14 @@ print(fool.cut(text))
 # ['我', '在', '北京', '晒太阳', '你', '在', '非洲', '看', '雪']]
 ```
 
-删除词典
+To delete the dictionary
 ```python
 fool.delete_userdict();
 ```
 
 
 
-##### 词性标注
+##### POS tagging
 
 ```
 import fool
@@ -86,7 +91,7 @@ print(fool.pos_cut(text))
 ```
 
 
-##### 实体识别
+##### Entity Recognition
 ```
 import fool 
 
@@ -96,9 +101,8 @@ print(ners)
 #[[(5, 8, 'location', '北京')]]
 ```
 
-### 其他语言版本
-[Java版](https://github.com/rockyzhengwu/JFoolNLTK)
+### Versions in Other languages
+* [Java](https://github.com/rockyzhengwu/JFoolNLTK)
 
-#### 注意
-* 有找不到模型文件的, 可以看下```sys.prefix```,一般默认为```/usr/local/```
-
+#### Note
+* For any missing model files, try looking in ```sys.prefix```, under ```/usr/local/```
