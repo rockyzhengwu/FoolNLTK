@@ -76,7 +76,7 @@ class LexicalAnalyzer(object):
                 lb = label.split("_")[0]
 
                 if lb == "S":
-                    ens.append((i, i + 1, lt, word))
+                    ens.append((i-1, i, lt, word))
                 elif lb == "B":
                     entity = ""
                     entity += word
@@ -85,11 +85,11 @@ class LexicalAnalyzer(object):
 
                 elif lb == "E":
                     entity += word
-                    ens.append((i - len(entity), i + 1, lt, entity))
+                    ens.append((i - len(entity), i, lt, entity))
                     entity = ""
 
             if entity:
-                ens.append((i - len(entity), i + 1, lt, entity))
+                ens.append((i - len(entity), i, lt, entity))
             all_entitys.append(ens)
 
         return all_entitys
