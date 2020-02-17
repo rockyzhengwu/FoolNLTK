@@ -13,6 +13,10 @@ A Chinese word processing toolkit
 
 ## Getting Started
 
+*** 2020/2/16 ***  update: use bert model train and export model to deploy, [chinese train documentation](./train/README.md)
+
+
+
 To download and build FoolNLTK, type:
 
 ```bash

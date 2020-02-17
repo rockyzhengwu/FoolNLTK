@@ -1,6 +1,43 @@
 # FoolNLTK-train
 FoolNLTK training process
 
+增加了利用 bert 训练实体模型的代码，可以导出 pb 文件，并用 python 加载实现线上部署
+模型没使用 crf ，而是直接用交叉熵作为损失，效果并没有太多损失
+
+1. 模型训练
+data_dir 存放训练数据格式如 datasets/demo 下。下载与训练的模型,我这里是将下载的模型软链接到 pretrainmodel 下 
+
+```shell script
+
+python ./train_bert_ner.py --data_dir=data/bid_train_data \
+  --bert_config_file=./pretrainmodel/bert_config.json \
+  --init_checkpoint=./pretrainmodel/bert_model.ckpt \
+  --vocab_file=./pretrainmodel/vocab.txt \
+  --output_dir=./output/all_bid_result_dir/ --do_train
+
+```
+
+2. 模型导出
+ predict 同时指定 do_export 就能导出 pb 格式的模型，用于部署
+```shell script
+python ./train_bert_ner.py --data_dir=data/bid_train_data \
+  --bert_config_file=./pretrainmodel/bert_config.json \
+  --init_checkpoint=./pretrainmodel/bert_model.ckpt \
+  --vocab_file=vocab.txt \
+  --output_dir=./output/all_bid_result_dir/ --do_predict --do_export
+```
+
+在 bert_predict.py 中指定下面三个参数就能加载训练好的模型完成预测:
+```python
+VOCAB_FILE = './pretrainmodel/vocab.txt'
+LABEL_FILE = './output/label2id.pkl'
+EXPORT_PATH = './export_models/1581318324'
+```
+
+代码参考: 
+- [bert-chinese-ner](https://github.com/ProHiryu/bert-chinese-ner)
+- [BERT-NER](https://github.com/kyzhouhzau/BERT-NER)
+
 ## 1.train file
 
 训练数据的格式和CRF++的训练数据一致,每一列用`\t`分隔，每一个句子用`\n`分隔

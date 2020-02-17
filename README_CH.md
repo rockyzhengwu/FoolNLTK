@@ -12,6 +12,9 @@
 
 ## 定制自己的模型
 
+*** 2020/2/16 ***  更新: 添加 bert 训练的代码, 详情看[文档](./train/README.md)
+
+
 
 ```bash
 get clone https://github.com/rockyzhengwu/FoolNLTK.git
